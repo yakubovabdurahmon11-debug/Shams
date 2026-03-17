@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shams Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#E8B84B;--gold2:#F5D080;
+  --dark:#0C0E14;--card:#13151E;--card2:#1A1D28;
+  --border:rgba(255,255,255,0.07);
+  --text:#F0EDE4;--muted:#7A7A8C;
+  --green:#3DBFA0;--red:#E85D5D;--blue:#5B8EF0;--purple:#A855F7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;font-size:14px}
+
+/* ── SIDEBAR ── */
+.sb{width:230px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:20;transition:transform .3s}
+.sb-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.sb-brand{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--gold)}
+.sb-tagline{font-size:10px;color:var(--muted);letter-spacing:.5px}
+
+.role-sw{display:flex;margin:10px;background:var(--card2);border-radius:8px;padding:3px;border:1px solid var(--border);flex-shrink:0}
+.role-btn{flex:1;padding:6px 4px;border:none;background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;border-radius:6px;transition:all .2s;font-family:inherit}
+.role-btn.on{background:var(--gold);color:#0C0E14}
+
+.sb-nav{padding:6px;flex:1;overflow-y:auto}
+.nav-sec{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:10px 8px 5px}
+.nav-it{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;transition:all .2s;margin-bottom:1px;border:none;background:transparent;width:100%;text-align:left}
+.nav-it:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-it.on{background:rgba(232,184,75,.1);color:var(--gold)}
+.nav-it .ic{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.nb{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;line-height:1.4}
+.nb.gold{background:var(--gold);color:#0C0E14}
+
+.sb-user{padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:700;color:#0C0E14;font-family:'Syne',sans-serif;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600}
+.sb-urole{font-size:11px;color:var(--muted)}
+
+/* ── MAIN ── */
+.main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh;max-width:100%}
+.topbar{height:54px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(12,14,20,.9);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;flex-shrink:0}
+.tb-left{display:flex;align-items:center;gap:12px}
+.tb-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800}
+.tb-right{display:flex;align-items:center;gap:10px}
+.icon-btn{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;position:relative;transition:background .2s}
+.icon-btn:hover{background:rgba(255,255,255,.06)}
+.red-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;background:var(--red);border-radius:50%}
+
+.content{padding:20px 22px;flex:1}
+
+/* ── PAGES ── */
+.pg{display:none}
+.pg.on{display:block}
+
+/* ── STAT ROW ── */
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 18px;transition:border-color .2s}
+.sc:hover{border-color:rgba(232,184,75,.15)}
+.sc .lbl{font-size:11px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+.sc .val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800}
+.sc .sub{font-size:11px;color:var(--muted);margin-top:3px}
+.val.gold{color:var(--gold)}.val.green{color:var(--green)}.val.red{color:var(--red)}.val.blue{color:var(--blue)}
+
+/* ── PANEL ── */
+.pn{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:16px}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.ph h3{font-size:13px;font-weight:600}
+.pb{padding:14px 18px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;color:var(--muted);font-weight:600;padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.015)}
+
+/* ── BADGE ── */
+.bd{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.bd.g{background:rgba(61,191,160,.12);color:var(--green);border:1px solid rgba(61,191,160,.2)}
+.bd.r{background:rgba(232,93,93,.12);color:var(--red);border:1px solid rgba(232,93,93,.2)}
+.bd.o{background:rgba(232,184,75,.12);color:var(--gold);border:1px solid rgba(232,184,75,.2)}
+.bd.b{background:rgba(91,142,240,.12);color:var(--blue);border:1px solid rgba(91,142,240,.2)}
+.bd.m{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
+.bd.p{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.2)}
+
+/* ── BUTTON ── */
+.btn{border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn.gold{background:var(--gold);color:#0C0E14}
+.btn.out{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn.red{background:rgba(232,93,93,.12);color:var(--red);border:1px solid rgba(232,93,93,.2)}
+.btn.green{background:rgba(61,191,160,.12);color:var(--green);border:1px solid rgba(61,191,160,.2)}
+.btn.lg{padding:10px 20px;font-size:13px;border-radius:9px}
+
+/* ── AVATAR ── */
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:#0C0E14;font-family:'Syne',sans-serif;flex-shrink:0}
+.av.lg{width:44px;height:44px;font-size:17px}
+
+/* ── PROGRESS ── */
+.prw{margin-bottom:10px}
+.prl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
+.prb{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.prf{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.prf.gold{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.prf.green{background:var(--green)}
+.prf.blue{background:var(--blue)}
+
+/* ── TASK ── */
+.ti{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.ti:last-child{border-bottom:none}
+.tck{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border);display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:all .2s;font-size:10px}
+.tck.done{background:var(--green);border-color:var(--green);color:#fff}
+.ti-info{flex:1;min-width:0}
+.ti-t{font-size:12px;font-weight:500}
+.ti-s{font-size:10px;color:var(--muted);margin-top:1px}
+.ti-d{font-size:10px;font-weight:600}
+.ti-d.late{color:var(--red)}
+.ti-d.ok{color:var(--green)}
+.ti-d.warn{color:var(--gold)}
+
+/* ── LEADERBOARD ── */
+.lb{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.lb:last-child{border-bottom:none}
+.lb-r{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;width:20px;text-align:center;color:var(--muted);flex-shrink:0}
+.lb-r.g{color:#FFD700}.lb-r.s{color:#C0C0C0}.lb-r.b{color:#CD7F32}
+.lb-i{flex:1;min-width:0}
+.lb-n{font-size:12px;font-weight:600}
+.lb-s{font-size:10px;color:var(--muted);margin-top:1px}
+.lb-p{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--gold);flex-shrink:0}
+
+/* ── CHAT ── */
+.chat-wrap{display:flex;flex-direction:column;height:420px}
+.chat-msgs{flex:1;padding:14px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.msg{padding:9px 13px;border-radius:11px;font-size:12px;line-height:1.65;max-width:80%}
+.msg.bot{background:var(--card2);border:1px solid var(--border);align-self:flex-start}
+.msg.user{background:var(--gold);color:#0C0E14;align-self:flex-end;font-weight:500}
+.tdots{display:flex;gap:4px;align-items:center;padding:2px 0}
+.dot{width:5px;height:5px;background:var(--muted);border-radius:50%;animation:bonce .9s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
+@keyframes bonce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.qbtns{display:flex;gap:6px;flex-wrap:wrap;padding:8px 18px}
+.qb{background:rgba(232,184,75,.07);border:1px solid rgba(232,184,75,.15);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--gold);cursor:pointer;transition:background .2s;font-family:inherit}
+.qb:hover{background:rgba(232,184,75,.14)}
+.chat-inp-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
+.cinp{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;transition:border-color .2s}
+.cinp:focus{border-color:rgba(232,184,75,.3)}
+.cinp::placeholder{color:var(--muted)}
+.csend{background:var(--gold);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:14px;display:grid;place-items:center;flex-shrink:0}
+
+/* ── SCHEDULE ── */
+.sched-wrap{display:grid;grid-template-columns:60px repeat(5,1fr);gap:5px}
+.shead{font-size:10px;color:var(--muted);text-align:center;padding:4px 0;font-weight:600}
+.slbl{font-size:10px;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.slot{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:6px 3px;text-align:center;font-size:10px;cursor:pointer;transition:all .2s;color:var(--muted);line-height:1.3}
+.slot:hover{border-color:rgba(232,184,75,.3);color:var(--gold)}
+.slot.busy{background:rgba(232,93,93,.07);border-color:rgba(232,93,93,.2);color:var(--red);cursor:not-allowed}
+.slot.mine{background:rgba(61,191,160,.1);border-color:rgba(61,191,160,.25);color:var(--green);cursor:default}
+.slot.sel{background:var(--gold);border-color:var(--gold);color:#0C0E14;font-weight:700}
+
+/* ── MODAL ── */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.mbg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:22px;width:360px;max-width:100%}
+.modal h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:16px}
+.fg{margin-bottom:12px}
+.fg label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.fi{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;transition:border-color .2s}
+.fi:focus{border-color:rgba(232,184,75,.35)}
+select.fi option{background:var(--card2)}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-size:12px;font-weight:500;z-index:999;transform:translateY(60px);opacity:0;transition:all .3s;max-width:260px;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.tg{border-color:rgba(61,191,160,.3);color:var(--green)}
+.toast.tr{border-color:rgba(232,93,93,.3);color:var(--red)}
+.toast.to{border-color:rgba(232,184,75,.3);color:var(--gold)}
+
+/* ── NOTIF DROPDOWN ── */
+.notif-dd{position:absolute;top:44px;right:0;background:var(--card);border:1px solid var(--border);border-radius:12px;width:280px;box-shadow:0 20px 40px rgba(0,0,0,.4);display:none;z-index:30}
+.notif-dd.open{display:block}
+.nd-head{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;display:flex;justify-content:space-between}
+.nd-item{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s}
+.nd-item:last-child{border-bottom:none}
+.nd-item:hover{background:rgba(255,255,255,.03)}
+.nd-title{font-size:12px;font-weight:500}
+.nd-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+@media(max-width:900px){
+  .sb{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .sr{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sb" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-icon">☀️</div>
+    <div>
+      <div class="sb-brand">Shams</div>
+      <div class="sb-tagline">O'quv platformasi</div>
+    </div>
+  </div>
+
+  <div class="role-sw">
+    <button class="role-btn on" onclick="setRole('t',this)">👨‍🏫 Ustoz</button>
+    <button class="role-btn" onclick="setRole('s',this)">👩‍🎓 O'quvchi</button>
+  </div>
+
+  <nav class="sb-nav" id="sbNav"></nav>
+
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv" style="background:linear-gradient(135deg,#5B8EF0,#3B6EE0)">Y</div>
+    <div>
+      <div class="sb-uname" id="sbName">Yoqubjon ustoz</div>
+      <div class="sb-urole" id="sbRole">Asosiy ustoz</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-title" id="pgTitle">Dashboard</div>
+    </div>
+    <div class="tb-right" style="position:relative">
+      <div class="icon-btn" id="notifBtn" onclick="toggleNotif()">
+        🔔<span class="red-dot" id="notifDot"></span>
+        <div class="notif-dd" id="notifDd">
+          <div class="nd-head"><span>Bildirishnomalar</span><span style="color:var(--muted);font-size:10px;cursor:pointer" onclick="clearNotifs()">Barchasini o'qi</span></div>
+          <div class="nd-item"><div class="nd-title">⚠️ Feruza 5 kun darsga kelmadi</div><div class="nd-sub">Bugun · 09:14</div></div>
+          <div class="nd-item"><div class="nd-title">💳 Otabek to'lov muddati o'tdi</div><div class="nd-sub">Kecha · 18:00</div></div>
+          <div class="nd-item"><div class="nd-title">📝 Azizbek vazifa yubordi</div><div class="nd-sub">2 soat oldin</div></div>
+          <div class="nd-item"><div class="nd-title">🎉 Ziyoda B2 darajasiga o'tdi!</div><div class="nd-sub">Bugun · 11:30</div></div>
+        </div>
+      </div>
+      <div class="icon-btn" id="userChip" style="display:flex;align-items:center;gap:7px;padding:5px 10px">
+        <div class="av" id="topAv" style="width:24px;height:24px;font-size:11px;background:linear-gradient(135deg,#5B8EF0,#3B6EE0)">Y</div>
+        <span id="topName" style="font-size:12px;font-weight:600">Yoqubjon</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ TEACHER PAGES ══════════ -->
+
+    <!-- T: Dashboard -->
+    <div class="pg on" id="pt-dash">
+      <div class="sr">
+        <div class="sc"><div class="lbl">Jami o'quvchilar</div><div class="val gold">47</div><div class="sub">↑ 3 ta bu hafta qo'shildi</div></div>
+        <div class="sc"><div class="lbl">Kutilayotgan to'lovlar</div><div class="val red">8</div><div class="sub">2 050 000 so'm</div></div>
+        <div class="sc"><div class="lbl">Tekshirilmagan vazifalar</div><div class="val blue">12</div><div class="sub">3 ta muddati o'tgan</div></div>
+        <div class="sc"><div class="lbl">Bu haftagi darslar</div><div class="val green">18</div><div class="sub">3 ta qoldi</div></div>
+      </div>
+
+      <div class="g2">
+        <div class="pn">
+          <div class="ph"><h3>⚠️ Diqqat talab qiluvchilar</h3><button class="btn out" onclick="goPage('pt-students')">Barchasi →</button></div>
+          <div class="pb" style="padding:6px 16px">
+            <div class="ti">
+              <div style="font-size:18px">🔴</div>
+              <div class="ti-info"><div class="ti-t">Feruza Toshpulatova</div><div class="ti-s">5 kun darsga kelmadi · To'lov ham yo'q</div></div>
+              <button class="btn red" onclick="toast('Feruza ga eslatma yuborildi','tg')">Eslatma</button>
+            </div>
+            <div class="ti">
+              <div style="font-size:18px">🟡</div>
+              <div class="ti-info"><div class="ti-t">Otabek Rajabov</div><div class="ti-s">3 ta vazifa bajarilmagan · To'lov kechikdi</div></div>
+              <button class="btn red" onclick="toast('Otabek ga eslatma yuborildi','tg')">Eslatma</button>
+            </div>
+            <div class="ti">
+              <div style="font-size:18px">🟡</div>
+              <div class="ti-info"><div class="ti-t">Azizbek Jalolov</div><div class="ti-s">To'lov qisman · 1 150 000 so'm qoldi</div></div>
+              <button class="btn red" onclick="toast('Azizbek ga eslatma yuborildi','tg')">Eslatma</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pn">
+          <div class="ph"><h3>📝 Kutilayotgan vazifalar</h3><button class="btn out" onclick="goPage('pt-tasks')">Barchasi →</button></div>
+          <div class="pb" style="padding:6px 16px">
+            <div class="ti">
+              <div class="ti-info"><div class="ti-t">Ziyoda — Grammatika test #5</div><div class="ti-s">B1 · Yuborilgan: bugun 10:22</div></div>
+              <button class="btn gold" onclick="openCheckModal('Ziyoda','Grammatika test #5')">Tekshir</button>
+            </div>
+            <div class="ti">
+              <div class="ti-info"><div class="ti-t">Azizbek — Tarjima mashqi</div><div class="ti-s">B2 · Yuborilgan: kecha</div></div>
+              <button class="btn gold" onclick="openCheckModal('Azizbek','Tarjima mashqi')">Tekshir</button>
+            </div>
+            <div class="ti">
+              <div class="ti-info"><div class="ti-t">Madinabonu — Harflar yozish</div><div class="ti-s">A2 · 2 kun oldin</div></div>
+              <button class="btn gold" onclick="openCheckModal('Madinabonu','Harflar yozish')">Tekshir</button>
+            </div>
+            <div class="ti">
+              <div class="ti-info"><div class="ti-t">Otabek — So'zlar yodlash</div><div class="ti-s" style="color:var(--red)">A1 · 4 kun oldin · Muddati o'tgan!</div></div>
+              <button class="btn red" onclick="toast('Otabek ga eslatma yuborildi','tg')">Eslatma</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- O'quvchilar jadvali -->
+      <div class="pn">
+        <div class="ph"><h3>👥 Barcha o'quvchilar holati</h3><button class="btn gold" onclick="document.getElementById('addStudM').classList.add('open')">+ Yangi o'quvchi</button></div>
+        <div style="overflow-x:auto">
+          <table class="tbl" style="min-width:600px">
+            <tr><th>O'quvchi</th><th>Daraja</th><th>Qatnashish</th><th>Oxirgi dars</th><th>Vazifalar</th><th>To'lov</th><th>Progress</th></tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:linear-gradient(135deg,#E8B84B,#F5D080)">Z</div>Ziyoda Yusupova</div></td>
+              <td><span class="bd b">B1</span></td>
+              <td style="color:var(--green);font-weight:600">94%</td>
+              <td style="color:var(--muted);font-size:11px">Bugun</td>
+              <td><span class="bd g">13/15</span></td>
+              <td><span class="bd r">To'lanmagan</span></td>
+              <td><div class="prb" style="width:90px"><div class="prf gold" style="width:72%"></div></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:rgba(91,142,240,.3);color:var(--blue)">A</div>Azizbek Jalolov</div></td>
+              <td><span class="bd g">B2</span></td>
+              <td style="color:var(--green);font-weight:600">88%</td>
+              <td style="color:var(--muted);font-size:11px">Kecha</td>
+              <td><span class="bd g">20/22</span></td>
+              <td><span class="bd o">Qisman</span></td>
+              <td><div class="prb" style="width:90px"><div class="prf gold" style="width:85%"></div></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:rgba(232,93,93,.25);color:var(--red)">F</div>Feruza Toshpulatova</div></td>
+              <td><span class="bd m">A2</span></td>
+              <td style="color:var(--red);font-weight:600">61%</td>
+              <td style="color:var(--red);font-size:11px">5 kun oldin ⚠️</td>
+              <td><span class="bd r">7/15</span></td>
+              <td><span class="bd r">To'lanmagan</span></td>
+              <td><div class="prb" style="width:90px"><div class="prf blue" style="width:35%"></div></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:rgba(61,191,160,.25);color:var(--green)">O</div>Otabek Rajabov</div></td>
+              <td><span class="bd m">A1</span></td>
+              <td style="color:var(--gold);font-weight:600">75%</td>
+              <td style="color:var(--muted);font-size:11px">3 kun oldin</td>
+              <td><span class="bd r">4/10</span></td>
+              <td><span class="bd r">To'lanmagan</span></td>
+              <td><div class="prb" style="width:90px"><div class="prf gold" style="width:28%"></div></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:rgba(168,85,247,.25);color:var(--purple)">M</div>Madinabonu A.</div></td>
+              <td><span class="bd p">B2</span></td>
+              <td style="color:var(--green);font-weight:600">96%</td>
+              <td style="color:var(--muted);font-size:11px">Bugun</td>
+              <td><span class="bd g">18/18</span></td>
+              <td><span class="bd g">To'landi</span></td>
+              <td><div class="prb" style="width:90px"><div class="prf gold" style="width:92%"></div></div></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- T: Vazifalar -->
+    <div class="pg" id="pt-tasks">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">Vazifalar boshqaruvi</div><div style="font-size:12px;color:var(--muted);margin-top:3px">O'quvchilarga vazifa bering, tekshiring</div></div>
+        <button class="btn gold lg" onclick="document.getElementById('addTaskM').classList.add('open')">+ Yangi vazifa</button>
+      </div>
+      <div class="pn">
+        <div style="overflow-x:auto">
+          <table class="tbl" style="min-width:620px">
+            <tr><th>Vazifa</th><th>O'quvchi</th><th>Berildi</th><th>Muddat</th><th>Holat</th><th>Ball</th><th>Amal</th></tr>
+            <tr><td style="font-weight:500">Grammatika test #5</td><td>Ziyoda Y.</td><td style="color:var(--muted)">Bugun</td><td><span style="color:var(--gold)">Ertaga</span></td><td><span class="bd g">✓ Yuborildi</span></td><td>—</td><td><button class="btn gold" onclick="openCheckModal('Ziyoda','Grammatika test #5')">Tekshir</button></td></tr>
+            <tr><td style="font-weight:500">Tarjima mashqi #3</td><td>Azizbek J.</td><td style="color:var(--muted)">Kecha</td><td><span style="color:var(--gold)">Bugun</span></td><td><span class="bd g">✓ Yuborildi</span></td><td>—</td><td><button class="btn gold" onclick="openCheckModal('Azizbek','Tarjima mashqi #3')">Tekshir</button></td></tr>
+            <tr><td style="font-weight:500">Harflar yozish</td><td>Madinabonu A.</td><td style="color:var(--muted)">2 kun oldin</td><td><span style="color:var(--green)">2 kun</span></td><td><span class="bd g">✓ Yuborildi</span></td><td>—</td><td><button class="btn gold" onclick="openCheckModal('Madinabonu','Harflar yozish')">Tekshir</button></td></tr>
+            <tr><td style="font-weight:500">So'zlar yodlash</td><td>Otabek R.</td><td style="color:var(--muted)">4 kun oldin</td><td><span style="color:var(--red)">⚠ O'tdi!</span></td><td><span class="bd r">✗ Yuborilmagan</span></td><td>—</td><td><button class="btn red" onclick="toast('Otabek ga eslatma yuborildi','tg')">Eslatma yubor</button></td></tr>
+            <tr><td style="font-weight:500">Tinglab yozish</td><td>Feruza T.</td><td style="color:var(--muted)">3 kun oldin</td><td><span style="color:var(--red)">⚠ O'tdi!</span></td><td><span class="bd r">✗ Yuborilmagan</span></td><td>—</td><td><button class="btn red" onclick="toast('Feruza ga eslatma yuborildi','tg')">Eslatma yubor</button></td></tr>
+            <tr><td style="font-weight:500">Qiroat mashqi</td><td>Ziyoda Y.</td><td style="color:var(--muted)">Bugun</td><td><span style="color:var(--green)">3 kun</span></td><td><span class="bd b">Yangi</span></td><td>—</td><td><span style="font-size:11px;color:var(--muted)">Kutilmoqda</span></td></tr>
+            <tr><td style="font-weight:500">Grammatika test #4</td><td>Azizbek J.</td><td style="color:var(--muted)">3 kun oldin</td><td><span style="color:var(--muted)">O'tdi</span></td><td><span class="bd g">✓ Tekshirildi</span></td><td><span style="color:var(--green);font-weight:700">4.5/5</span></td><td><button class="btn out" onclick="toast('Natija yuborildi','tg')">Natija yubor</button></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- T: To'lovlar -->
+    <div class="pg" id="pt-pay">
+      <div style="margin-bottom:18px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">To'lovlar boshqaruvi</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Barcha to'lovlar bir joyda kuzatiladi</div></div>
+      <div class="sr" style="grid-template-columns:repeat(3,1fr)">
+        <div class="sc"><div class="lbl">Bu oy yig'ildi</div><div class="val green">8 450 000</div><div class="sub">so'm</div></div>
+        <div class="sc"><div class="lbl">Kutilayotgan</div><div class="val red">2 050 000</div><div class="sub">8 ta o'quvchi</div></div>
+        <div class="sc"><div class="lbl">Keyingi to'lov</div><div class="val gold">1-aprel</div><div class="sub">yangi oy</div></div>
+      </div>
+      <div class="pn">
+        <div style="overflow-x:auto">
+          <table class="tbl" style="min-width:580px">
+            <tr><th>O'quvchi</th><th>Tarif</th><th>Summa</th><th>To'langan</th><th>Qoldi</th><th>Holat</th><th>Amal</th></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="background:linear-gradient(135deg,#E8B84B,#F5D080)">Z</div>Ziyoda Y.</div></td><td><span class="bd m">Guruh</span></td><td>350 000</td><td style="color:var(--red)">0</td><td style="color:var(--red);font-weight:600">350 000</td><td><span class="bd r">To'lanmagan</span></td><td><button class="btn green" onclick="toast('SMS + Telegram yuborildi ✓','tg')">📲 Eslatma</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="background:rgba(91,142,240,.3);color:var(--blue)">A</div>Azizbek J.</div></td><td><span class="bd b">O'rta</span></td><td>2 300 000</td><td style="color:var(--gold)">1 150 000</td><td style="color:var(--gold);font-weight:600">1 150 000</td><td><span class="bd o">Qisman</span></td><td><button class="btn green" onclick="toast('Eslatma yuborildi ✓','tg')">📲 Eslatma</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="background:rgba(61,191,160,.25);color:var(--green)">F</div>Feruza T.</div></td><td><span class="bd m">Yengil</span></td><td>1 700 000</td><td style="color:var(--green)">1 700 000</td><td style="color:var(--green)">0</td><td><span class="bd g">To'landi ✓</span></td><td><button class="btn out" onclick="toast('Kvitansiya yuborildi','tg')">📄 Kvitansiya</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="background:rgba(61,191,160,.25);color:var(--green)">O</div>Otabek R.</div></td><td><span class="bd m">Guruh</span></td><td>350 000</td><td style="color:var(--red)">0</td><td style="color:var(--red);font-weight:600">350 000</td><td><span class="bd r">To'lanmagan</span></td><td><button class="btn green" onclick="toast('SMS + Telegram yuborildi ✓','tg')">📲 Eslatma</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="background:rgba(168,85,247,.25);color:var(--purple)">M</div>Madinabonu A.</div></td><td><span class="bd p">Katta</span></td><td>2 800 000</td><td style="color:var(--green)">2 800 000</td><td style="color:var(--green)">0</td><td><span class="bd g">To'landi ✓</span></td><td><button class="btn out" onclick="toast('Kvitansiya yuborildi','tg')">📄 Kvitansiya</button></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- T: Jadval -->
+    <div class="pg" id="pt-sched">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">Dars jadvali</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Bu haftaning barcha Zoom darslar</div></div>
+        <button class="btn gold lg" onclick="toast('Yangi dars qo\'shildi','tg')">+ Yangi dars</button>
+      </div>
+      <div class="g3">
+        <div class="pn" style="margin-bottom:0"><div class="ph"><h3>Bugungi darslar</h3></div><div class="pb" style="padding:10px 14px">
+          <div style="background:rgba(61,191,160,.08);border:1px solid rgba(61,191,160,.2);border-radius:8px;padding:12px;margin-bottom:8px"><div style="font-size:12px;color:var(--muted)">09:00 — 09:40</div><div style="font-size:14px;font-weight:700;color:var(--green);margin:3px 0">A1 guruh</div><div style="font-size:11px;color:var(--muted)">5 o'quvchi · Zoom</div><button class="btn green" style="margin-top:8px;width:100%;font-size:11px" onclick="toast('Zoom havolasi nusxalandi!','to')">🔗 Zoom havolasi</button></div>
+          <div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:8px;padding:12px"><div style="font-size:12px;color:var(--muted)">19:00 — 19:40</div><div style="font-size:14px;font-weight:700;color:var(--gold);margin:3px 0">B1 guruh</div><div style="font-size:11px;color:var(--muted)">8 o'quvchi · Zoom</div><button class="btn gold" style="margin-top:8px;width:100%;font-size:11px" onclick="toast('Zoom havolasi nusxalandi!','to')">🔗 Zoom havolasi</button></div>
+        </div></div>
+        <div class="pn" style="margin-bottom:0;grid-column:span 2"><div class="ph"><h3>Haftalik jadval</h3></div><div class="pb">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+            <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:600">Dushanba</div><div style="background:rgba(61,191,160,.08);border:1px solid rgba(61,191,160,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--green);margin-bottom:5px">09:00<br>A1 guruh</div><div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--gold)">19:00<br>B1 guruh</div></div>
+            <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:600">Seshanba</div><div style="background:rgba(91,142,240,.08);border:1px solid rgba(91,142,240,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--blue);margin-bottom:5px">11:00<br>B2 guruh</div><div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--purple)">17:00<br>Individual</div></div>
+            <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:600">Chorshanba</div><div style="background:rgba(61,191,160,.08);border:1px solid rgba(61,191,160,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--green);margin-bottom:5px">09:00<br>A1 guruh</div><div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--gold)">19:00<br>B1 guruh</div></div>
+            <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:600">Payshanba</div><div style="background:rgba(91,142,240,.08);border:1px solid rgba(91,142,240,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--blue);margin-bottom:5px">11:00<br>B2 guruh</div><div style="font-size:11px;color:var(--muted);padding:8px">—</div></div>
+            <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:600">Juma</div><div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--gold);margin-bottom:5px">18:00<br>B1 guruh</div><div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);border-radius:7px;padding:8px;font-size:11px;color:var(--purple)">20:00<br>Individual</div></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══════════ STUDENT PAGES ══════════ -->
+
+    <!-- S: Dashboard -->
+    <div class="pg" id="ps-dash">
+      <div style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;margin-bottom:18px">
+        <div class="av lg" style="background:linear-gradient(135deg,var(--gold),var(--gold2))">Z</div>
+        <div style="flex:1">
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800">Ziyoda Yusupova</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px">B1 daraja · Guruh: B1-01 · 18-dars</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <span class="bd g">🔥 5 kun streak</span>
+            <span class="bd o">⭐ Doimiy o'quvchi</span>
+            <span class="bd b">📚 20+ dars</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--gold)">1,840 XP</div>
+          <div style="font-size:11px;color:var(--muted)">Reyting: #1 🏆</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Keyingi daraja: 3,000 XP</div>
+        </div>
+      </div>
+
+      <div class="sr">
+        <div class="sc"><div class="lbl">Qatnashish</div><div class="val green">94%</div><div class="sub">18 / 20 dars</div></div>
+        <div class="sc"><div class="lbl">Vazifalar</div><div class="val gold">87%</div><div class="sub">13 / 15 bajarildi</div></div>
+        <div class="sc"><div class="lbl">O'rtacha ball</div><div class="val blue">4.6/5</div><div class="sub">oxirgi 5 test</div></div>
+        <div class="sc"><div class="lbl">Keyingi dars</div><div class="val gold">18:00</div><div class="sub">Bugun · B1 guruh</div></div>
+      </div>
+
+      <div class="g2">
+        <div class="pn">
+          <div class="ph"><h3>📚 Mening vazifalarim</h3><button class="btn out" onclick="goPage('ps-tasks')">Barchasi →</button></div>
+          <div class="pb" style="padding:6px 16px">
+            <div class="ti"><div class="tck done">✓</div><div class="ti-info"><div class="ti-t">Grammatika test #4</div><div class="ti-s">Tekshirildi · Ball: 4.5/5 🎉</div></div><div class="ti-d ok">+45 XP</div></div>
+            <div class="ti"><div class="tck done">✓</div><div class="ti-info"><div class="ti-t">Harflar yozish</div><div class="ti-s">Tekshirildi · Ball: 5/5 ⭐</div></div><div class="ti-d ok">+50 XP</div></div>
+            <div class="ti"><div class="tck" id="tck1" onclick="checkTask(this,'tck1','+35 XP qo\'shildi!')"></div><div class="ti-info"><div class="ti-t">Grammatika test #5</div><div class="ti-s">Yangi · Muddat: ertaga</div></div><div class="ti-d warn">Ertaga</div></div>
+            <div class="ti"><div class="tck" id="tck2" onclick="checkTask(this,'tck2','+40 XP qo\'shildi!')"></div><div class="ti-info"><div class="ti-t">Qiroat mashqi</div><div class="ti-s">Yangi · Muddat: 3 kun</div></div><div class="ti-d ok">3 kun</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="pn" style="margin-bottom:14px">
+            <div class="ph"><h3>📈 Bilim darajam</h3></div>
+            <div class="pb">
+              <div class="prw"><div class="prl"><span>Grammatika</span><span>82%</span></div><div class="prb"><div class="prf gold" style="width:82%"></div></div></div>
+              <div class="prw"><div class="prl"><span>So'z boyligi</span><span>68%</span></div><div class="prb"><div class="prf blue" style="width:68%"></div></div></div>
+              <div class="prw"><div class="prl"><span>Talaffuz</span><span>75%</span></div><div class="prb"><div class="prf green" style="width:75%"></div></div></div>
+              <div class="prw"><div class="prl"><span>Tarjima</span><span>90%</span></div><div class="prb"><div class="prf gold" style="width:90%"></div></div></div>
+              <div style="margin-top:10px"><div class="prl"><span style="font-size:11px;color:var(--muted)">Keyingi darajaga</span><span style="font-size:11px;color:var(--muted)">78%</span></div><div class="prb"><div class="prf" style="width:78%;background:linear-gradient(90deg,var(--purple),#C084FC)"></div></div></div>
+            </div>
+          </div>
+          <div class="pn" style="margin-bottom:0">
+            <div class="ph"><h3>📅 Keyingi dars</h3></div>
+            <div class="pb" style="display:flex;flex-direction:column;gap:8px">
+              <div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:9px;padding:12px"><div style="font-size:12px;color:var(--muted)">Bugun</div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--gold)">18:00</div><div style="font-size:11px;color:var(--muted)">B1 guruh · Zoom · 40 daqiqa</div></div>
+              <button class="btn gold" style="width:100%" onclick="toast('Zoom havolasi nusxalandi! ✓','to')">🔗 Zoom havolasini olish</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S: Mening vazifalarim -->
+    <div class="pg" id="ps-tasks">
+      <div style="margin-bottom:18px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">Mening vazifalarim</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Barcha vazifalar va ularning holati</div></div>
+      <div class="pn">
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <tr><th>Vazifa</th><th>Ustoz</th><th>Muddat</th><th>Holat</th><th>Ball</th><th>XP</th></tr>
+            <tr><td style="font-weight:500">Grammatika test #4</td><td style="color:var(--muted)">Yoqubjon ustoz</td><td style="color:var(--muted)">O'tdi</td><td><span class="bd g">✓ Tekshirildi</span></td><td style="color:var(--green);font-weight:700">4.5/5</td><td style="color:var(--gold);font-weight:600">+45</td></tr>
+            <tr><td style="font-weight:500">Harflar yozish</td><td style="color:var(--muted)">Yoqubjon ustoz</td><td style="color:var(--muted)">O'tdi</td><td><span class="bd g">✓ Tekshirildi</span></td><td style="color:var(--green);font-weight:700">5/5</td><td style="color:var(--gold);font-weight:600">+50</td></tr>
+            <tr><td style="font-weight:500">Grammatika test #5</td><td style="color:var(--muted)">Yoqubjon ustoz</td><td style="color:var(--gold)">Ertaga</td><td><span class="bd b">Yangi</span></td><td>—</td><td>—</td></tr>
+            <tr><td style="font-weight:500">Qiroat mashqi</td><td style="color:var(--muted)">Yoqubjon ustoz</td><td style="color:var(--green)">3 kun</td><td><span class="bd b">Yangi</span></td><td>—</td><td>—</td></tr>
+            <tr><td style="font-weight:500">Tarjima test #2</td><td style="color:var(--muted)">Yoqubjon ustoz</td><td style="color:var(--muted)">O'tdi</td><td><span class="bd g">✓ Tekshirildi</span></td><td style="color:var(--green);font-weight:700">4/5</td><td style="color:var(--gold);font-weight:600">+40</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- S: Leaderboard -->
+    <div class="pg" id="ps-lb">
+      <div style="margin-bottom:18px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">🏆 Reyting</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Eng faol o'quvchilar</div></div>
+      <div class="g2">
+        <div class="pn">
+          <div class="ph"><h3>Bu haftaning reytingi</h3><span style="font-size:11px;color:var(--muted)">XP ball bo'yicha</span></div>
+          <div class="pb" style="padding:8px 16px">
+            <div class="lb"><div class="lb-r g">1</div><div class="av" style="background:linear-gradient(135deg,#FFD700,#FFE55C);color:#0C0E14">Z</div><div class="lb-i"><div class="lb-n" style="color:var(--gold)">Ziyoda Yusupova 👑</div><div class="lb-s">B1 · 8 dars · 4 vazifa</div></div><div class="lb-p">1,840</div></div>
+            <div class="lb"><div class="lb-r s">2</div><div class="av" style="background:rgba(91,142,240,.3);color:var(--blue)">A</div><div class="lb-i"><div class="lb-n">Azizbek Jalolov</div><div class="lb-s">B2 · 7 dars · 5 vazifa</div></div><div class="lb-p">1,620</div></div>
+            <div class="lb"><div class="lb-r b">3</div><div class="av" style="background:rgba(168,85,247,.25);color:var(--purple)">M</div><div class="lb-i"><div class="lb-n">Madinabonu A.</div><div class="lb-s">B2 · 7 dars · 5 vazifa</div></div><div class="lb-p">1,590</div></div>
+            <div class="lb"><div class="lb-r">4</div><div class="av" style="background:rgba(61,191,160,.25);color:var(--green)">O</div><div class="lb-i"><div class="lb-n">Otabek Rajabov</div><div class="lb-s">A1 · 5 dars</div></div><div class="lb-p">980</div></div>
+            <div class="lb"><div class="lb-r">5</div><div class="av" style="background:rgba(232,93,93,.2);color:var(--red)">F</div><div class="lb-i"><div class="lb-n">Feruza Toshpulatova</div><div class="lb-s">A2 · 3 dars</div></div><div class="lb-p">540</div></div>
+          </div>
+        </div>
+        <div class="pn">
+          <div class="ph"><h3>Oylik reyting</h3><span style="font-size:11px;color:var(--muted)">Mart 2025</span></div>
+          <div class="pb" style="padding:8px 16px">
+            <div class="lb"><div class="lb-r g">1</div><div class="av" style="background:rgba(91,142,240,.3);color:var(--blue)">A</div><div class="lb-i"><div class="lb-n">Azizbek Jalolov</div><div class="lb-s">B2 · 28 dars · 22 vazifa</div></div><div class="lb-p">7,420</div></div>
+            <div class="lb"><div class="lb-r s">2</div><div class="av" style="background:linear-gradient(135deg,#FFD700,#FFE55C);color:#0C0E14">Z</div><div class="lb-i"><div class="lb-n" style="color:var(--gold)">Ziyoda Yusupova ← Siz</div><div class="lb-s">B1 · 18 dars</div></div><div class="lb-p">6,840</div></div>
+            <div class="lb"><div class="lb-r b">3</div><div class="av" style="background:rgba(168,85,247,.25);color:var(--purple)">M</div><div class="lb-i"><div class="lb-n">Madinabonu A.</div><div class="lb-s">B2 · 24 dars</div></div><div class="lb-p">6,100</div></div>
+            <div class="lb"><div class="lb-r">4</div><div class="av" style="background:rgba(61,191,160,.25);color:var(--green)">O</div><div class="lb-i"><div class="lb-n">Otabek Rajabov</div><div class="lb-s">A2 · 20 dars</div></div><div class="lb-p">4,900</div></div>
+            <div class="lb"><div class="lb-r">5</div><div class="av" style="background:rgba(232,93,93,.2);color:var(--red)">F</div><div class="lb-i"><div class="lb-n">Feruza Toshpulatova</div><div class="lb-s">A2 · 12 dars</div></div><div class="lb-p">3,200</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S: Jadval -->
+    <div class="pg" id="ps-sched">
+      <div style="margin-bottom:18px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">📅 Dars jadvali</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Qulay vaqtni tanlang va yoziling</div></div>
+      <div class="g2">
+        <div class="pn" style="margin-bottom:0">
+          <div class="ph"><h3>Mening darslarim</h3></div>
+          <div class="pb" style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:rgba(61,191,160,.08);border:1px solid rgba(61,191,160,.2);border-radius:9px;padding:12px"><div style="font-size:11px;color:var(--muted)">Dushanba, Chorshanba</div><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green)">19:00 — 19:40</div><div style="font-size:11px;color:var(--muted);margin-top:2px">B1 guruh · 8 o'quvchi · Zoom</div><button class="btn green" style="margin-top:8px;font-size:11px" onclick="toast('Zoom havolasi nusxalandi ✓','to')">🔗 Havolani olish</button></div>
+            <div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:9px;padding:12px"><div style="font-size:11px;color:var(--muted)">Juma</div><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--gold)">18:00 — 18:40</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Individual dars · Ustoz: Yoqubjon</div><button class="btn gold" style="margin-top:8px;font-size:11px" onclick="toast('Zoom havolasi nusxalandi ✓','to')">🔗 Havolani olish</button></div>
+          </div>
+        </div>
+        <div class="pn" style="margin-bottom:0">
+          <div class="ph"><h3>Qo'shimcha dars yozilish</h3><span style="font-size:10px;color:var(--muted)">🟢 Bo'sh &nbsp; 🔴 Band &nbsp; 🔵 Sizniki</span></div>
+          <div class="pb">
+            <div class="sched-wrap" id="schedGrid">
+              <div class="shead"></div>
+              <div class="shead">Du</div><div class="shead">Se</div><div class="shead">Ch</div><div class="shead">Pa</div><div class="shead">Ju</div>
+            </div>
+            <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="font-size:12px;color:var(--muted)">Tanlangan: <span id="slotTxt" style="color:var(--text);font-weight:600">—</span></div>
+              <button class="btn gold" style="margin-left:auto" onclick="bookSlot()">Yozilish →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S: AI Chat -->
+    <div class="pg" id="ps-chat">
+      <div style="margin-bottom:18px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">🤖 AI Yordamchi</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Arab tili, dars va platformaga oid istalgan savolingizni bering</div></div>
+      <div style="max-width:560px">
+        <div class="pn" style="margin-bottom:0">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)">
+            <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:grid;place-items:center;font-size:16px">☀️</div>
+            <div><div style="font-size:13px;font-weight:600">Shams AI <span style="display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-left:4px;vertical-align:middle;animation:pulse 2s infinite"></span></div><div style="font-size:10px;color:var(--muted)">Har doim onlayn · Arab tili bo'yicha mutaxassis</div></div>
+          </div>
+          <div class="chat-wrap">
+            <div class="chat-msgs" id="aiMsgs">
+              <div class="msg bot">Assalomu alaykum Ziyoda! 👋 Men Shams AI. Arab tili, darslar, vazifalar yoki platform haqida istalgan savolingizni bering!</div>
+            </div>
+            <div class="qbtns">
+              <button class="qb" onclick="aiAsk('Harflar haqida tushuntir')">Arab harflari</button>
+              <button class="qb" onclick="aiAsk('Keyingi darsim qachon?')">Keyingi dars</button>
+              <button class="qb" onclick="aiAsk('مرحبا ni qanday talaffuz qilaman?')">Talaffuz</button>
+              <button class="qb" onclick="aiAsk('B2 darajaga o\'tish uchun nima kerak?')">Daraja oshirish</button>
+            </div>
+            <div class="chat-inp-row">
+              <input class="cinp" id="aiInp" placeholder="Savol yozing..." onkeydown="if(event.key==='Enter')aiSend()">
+              <button class="csend" onclick="aiSend()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<div class="mbg" id="addStudM">
+  <div class="modal">
+    <h3>➕ Yangi o'quvchi qo'shish</h3>
+    <div class="fg"><label>Ism familiya</label><input class="fi" placeholder="Masalan: Ziyoda Yusupova"></div>
+    <div class="fg"><label>Telefon</label><input class="fi" placeholder="+998 90 123 45 67"></div>
+    <div class="fg"><label>Telegram username</label><input class="fi" placeholder="@username"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label>Daraja</label><select class="fi"><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option></select></div>
+      <div class="fg"><label>Tarif</label><select class="fi"><option>Guruh (350 000)</option><option>Yengil (1 700 000)</option><option>O'rta (2 300 000)</option><option>Katta (2 800 000)</option></select></div>
+    </div>
+    <div class="fg"><label>Izoh</label><input class="fi" placeholder="Qo'shimcha ma'lumot..."></div>
+    <div class="mbtns">
+      <button class="btn out" onclick="this.closest('.mbg').classList.remove('open')">Bekor</button>
+      <button class="btn gold" onclick="this.closest('.mbg').classList.remove('open');toast('O\'quvchi muvaffaqiyatli qo\'shildi ✓','tg')">Qo'shish</button>
+    </div>
+  </div>
+</div>
+
+<div class="mbg" id="addTaskM">
+  <div class="modal">
+    <h3>📝 Yangi vazifa berish</h3>
+    <div class="fg"><label>Vazifa nomi</label><input class="fi" placeholder="Masalan: Grammatika test #6"></div>
+    <div class="fg"><label>O'quvchi / guruh</label><select class="fi"><option>Barcha B1 guruhi</option><option>Ziyoda Yusupova</option><option>Azizbek Jalolov</option><option>Feruza Toshpulatova</option><option>Otabek Rajabov</option><option>Madinabonu A.</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label>Muddat (kun)</label><input class="fi" type="number" value="3" min="1"></div>
+      <div class="fg"><label>XP ball</label><input class="fi" type="number" value="30" min="10"></div>
+    </div>
+    <div class="fg"><label>Topshiriq matni</label><textarea class="fi" rows="3" placeholder="Vazifa tavsifi va ko'rsatmalar..."></textarea></div>
+    <div class="mbtns">
+      <button class="btn out" onclick="this.closest('.mbg').classList.remove('open')">Bekor</button>
+      <button class="btn gold" onclick="this.closest('.mbg').classList.remove('open');toast('Vazifa o\'quvchilarga yuborildi ✓','tg')">Yuborish</button>
+    </div>
+  </div>
+</div>
+
+<div class="mbg" id="checkM">
+  <div class="modal">
+    <h3 id="checkTitle">Vazifa tekshirish</h3>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--muted)">O'quvchi javobi bu yerda ko'rinadi. Haqiqiy tizimda fayl yoki matn yuklash imkoni bo'ladi.</div>
+    <div class="fg"><label>Ball (0–5)</label><input class="fi" type="number" min="0" max="5" step="0.5" value="4.5"></div>
+    <div class="fg"><label>Izoh / Fikr</label><textarea class="fi" rows="3" placeholder="O'quvchiga fikr-mulohaza..."></textarea></div>
+    <div class="mbtns">
+      <button class="btn out" onclick="document.getElementById('checkM').classList.remove('open')">Bekor</button>
+      <button class="btn gold" onclick="document.getElementById('checkM').classList.remove('open');toast('Ball va izoh yuborildi ✓','tg')">Baholash</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+
+<script>
+// ── MENUS ──
+const MENUS={
+  t:[
+    {s:'Asosiy'},
+    {id:'pt-dash',ic:'📊',lb:'Dashboard'},
+    {id:'pt-tasks',ic:'📝',lb:'Vazifalar',nb:'12'},
+    {id:'pt-pay',ic:'💳',lb:"To'lovlar",nb:'8',nc:'gold'},
+    {id:'pt-sched',ic:'📅',lb:'Jadval'},
+    {s:'Boshqaruv'},
+    {id:'pt-students',ic:'👥',lb:"O'quvchilar"},
+  ],
+  s:[
+    {s:'Mening'},
+    {id:'ps-dash',ic:'🏠',lb:'Dashboard'},
+    {id:'ps-tasks',ic:'📝',lb:'Vazifalarim',nb:'2'},
+    {id:'ps-lb',ic:'🏆',lb:'Reyting'},
+    {id:'ps-sched',ic:'📅',lb:'Jadval'},
+    {id:'ps-chat',ic:'🤖',lb:'AI Yordam'},
+  ]
+};
+
+const TITLES={
+  'pt-dash':'Dashboard','pt-tasks':'Vazifalar','pt-pay':"To'lovlar",'pt-sched':'Jadval','pt-students':"O'quvchilar",
+  'ps-dash':'Dashboard','ps-tasks':'Mening vazifalarim','ps-lb':'Reyting','ps-sched':'Jadval','ps-chat':'AI Yordamchi'
+};
+
+let role='t', cur='pt-dash';
+
+function setRole(r,btn){
+  role=r;
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(r==='t'){
+    document.getElementById('sbAv').style.background='linear-gradient(135deg,#5B8EF0,#3B6EE0)';
+    document.getElementById('sbAv').textContent='Y';
+    document.getElementById('sbName').textContent='Yoqubjon ustoz';
+    document.getElementById('sbRole').textContent='Asosiy ustoz';
+    document.getElementById('topAv').style.background='linear-gradient(135deg,#5B8EF0,#3B6EE0)';
+    document.getElementById('topAv').textContent='Y';
+    document.getElementById('topName').textContent='Yoqubjon';
+    goPage('pt-dash');
+  } else {
+    document.getElementById('sbAv').style.background='linear-gradient(135deg,var(--gold),var(--gold2))';
+    document.getElementById('sbAv').style.color='#0C0E14';
+    document.getElementById('sbAv').textContent='Z';
+    document.getElementById('sbName').textContent='Ziyoda Yusupova';
+    document.getElementById('sbRole').textContent="B1 daraja · O'quvchi";
+    document.getElementById('topAv').style.background='linear-gradient(135deg,var(--gold),var(--gold2))';
+    document.getElementById('topAv').style.color='#0C0E14';
+    document.getElementById('topAv').textContent='Z';
+    document.getElementById('topName').textContent='Ziyoda';
+    goPage('ps-dash');
+  }
+}
+
+function renderNav(){
+  const nav=document.getElementById('sbNav');
+  nav.innerHTML='';
+  MENUS[role].forEach(item=>{
+    if(item.s){nav.innerHTML+=`<div class="nav-sec">${item.s}</div>`;return;}
+    const on=item.id===cur?'on':'';
+    const nb=item.nb?`<span class="nb${item.nc?' '+item.nc:''}">${item.nb}</span>`:'';
+    nav.innerHTML+=`<button class="nav-it ${on}" onclick="goPage('${item.id}')"><span class="ic">${item.ic}</span>${item.lb}${nb}</button>`;
+  });
+}
+
+function goPage(id){
+  const el=document.getElementById(id);
+  if(!el){
+    toast('Bu sahifa tez orada qo\'shiladi','to');
+    return;
+  }
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  cur=id;
+  document.getElementById('pgTitle').textContent=TITLES[id]||'';
+  renderNav();
+  if(id==='ps-sched') buildSched();
+}
+
+// ── SCHEDULE ──
+const TIMES=['09:00','11:00','14:00','17:00','19:00'];
+const DAYS=['Du','Se','Ch','Pa','Ju'];
+const BUSY={1:{2:1},2:{0:1},3:{1:1,3:1},4:{2:1}};
+const MINE={0:{4:1},2:{4:1}};
+let selSlot=null;
+
+function buildSched(){
+  const g=document.getElementById('schedGrid');
+  if(!g||g.children.length>6) return;
+  TIMES.forEach((t,ti)=>{
+    const lbl=document.createElement('div');
+    lbl.className='slbl';lbl.textContent=t;
+    g.appendChild(lbl);
+    DAYS.forEach((d,di)=>{
+      const s=document.createElement('div');
+      s.className='slot';
+      if(MINE[di]&&MINE[di][ti]){s.classList.add('mine');s.innerHTML=`🔵<br>${d}`;}
+      else if(BUSY[di]&&BUSY[di][ti]){s.classList.add('busy');s.innerHTML=`🔴<br>${d}`;}
+      else{
+        s.innerHTML=`🟢<br>${d}`;
+        s.onclick=()=>{
+          document.querySelectorAll('.slot.sel').forEach(x=>x.classList.remove('sel'));
+          s.classList.add('sel');
+          selSlot=`${d} kuni soat ${t}`;
+          document.getElementById('slotTxt').textContent=selSlot;
+        };
+      }
+      g.appendChild(s);
+    });
+  });
+}
+
+function bookSlot(){
+  if(!selSlot){toast('Iltimos avval vaqt tanlang!','tr');return;}
+  document.querySelectorAll('.slot.sel').forEach(s=>s.classList.remove('sel'));
+  toast(`${selSlot} — yozildingiz! Ustoz tasdiqlaydi ✓`,'tg');
+  selSlot=null;
+  document.getElementById('slotTxt').textContent='—';
+}
+
+// ── TASK CHECK ──
+function checkTask(el,id,msg){
+  el.classList.add('done');
+  el.textContent='✓';
+  toast(msg,'tg');
+}
+
+// ── MODALS ──
+function openCheckModal(name,task){
+  document.getElementById('checkTitle').textContent=`${name} — ${task}`;
+  document.getElementById('checkM').classList.add('open');
+}
+
+// ── NOTIFICATIONS ──
+function toggleNotif(){
+  document.getElementById('notifDd').classList.toggle('open');
+  document.getElementById('notifDot').style.display='none';
+}
+function clearNotifs(){
+  document.getElementById('notifDd').querySelectorAll('.nd-item').forEach(i=>i.style.opacity='.4');
+  toast('Barcha bildirishnomalar o\'qildi','tg');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#notifBtn')) document.getElementById('notifDd').classList.remove('open');
+});
+
+// ── TOAST ──
+function toast(msg,type='tg'){
+  const t=document.getElementById('toastEl');
+  t.textContent=msg;
+  t.className=`toast ${type} show`;
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── AI CHAT ──
+const AI=[
+  {k:['harf','hijja','حرف','abjad'],a:'Arab alifbosida 28 ta harf bor 📖\n\nHar bir harfning 4 xil ko\'rinishi:\n• Alohida: ب\n• Boshida: بـ\n• O\'rtasida: ـبـ\n• Oxirida: ـب\n\nBirinchi 5 harf: أ ب ت ث ج'},
+  {k:['marhabo','مرحبا','salom','assalom'],a:'مرحبا (Marhaban) = "Salom" 🤝\n\nTalaffuzi: mar-HA-ban\nJavob: أهلاً وسهلاً (Ahlan wa sahlan)\n\nRasmiyroq: السلام عليكم (Assalamu alaykum)'},
+  {k:['keyingi','dars','qach','bugun','vaqt'],a:'Keyingi darslar 📅\n\n• Bugun 18:00 — Individual (Yoqubjon ustoz)\n• Dushanba 19:00 — B1 guruh\n• Chorshanba 19:00 — B1 guruh\n\nZoom havolasi Telegram guruhda!'},
+  {k:['b2','daraja','oshir','keyingi daraja'],a:'B2 darajaga o\'tish uchun 🎯\n\nHozirgi holatiz: B1 (78% tayyor)\nKerak bo\'ladi:\n• Grammatika: 85%+ ✓ (82%)\n• So\'z boyligi: 800+ so\'z\n• Talaffuz: 80%+ ✓ (75%)\n• Tarjima: 85%+ ✓ (90%)\n\nYakin! Yana 1–2 oy intensiv ishlang.'},
+  {k:['grammar','grammatika','nahv'],a:'Arab grammatikasining asoslari 📚\n\nAsosiy tushunchalar:\n1. الاسم (al-ism) — Ot\n2. الفعل (al-fi\'l) — Fe\'l\n3. الحرف (al-harf) — Ko\'makchi\n\nJumla tartibi: Fe\'l + Ega + To\'ldiruvchi\nMisol: ذهب الطالب إلى المدرسة\n(Talaba maktabga ketdi)'},
+  {k:['xp','ball','reyting','necha'],a:'Sizning holatiz 🏆\n\n• Jami XP: 1,840\n• Haftalik reyting: #1 👑\n• Oylik reyting: #2\n• Streak: 5 kun 🔥\n\nKeyingi darajaga: 3,000 XP kerak\nFarq: 1,160 XP (taxminan 3–4 dars)'},
+];
+
+function aiSend(){
+  const inp=document.getElementById('aiInp');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  addMsg(txt,'user');
+  inp.value='';
+  const tp=addTyping();
+  setTimeout(()=>{
+    tp.remove();
+    const lc=txt.toLowerCase();
+    let resp='Ajoyib savol! 🤔 Bu mavzuni keyingi darsda batafsil ko\'rib chiqamiz. Hozircha ustozga Telegram orqali yozishingiz mumkin.';
+    for(const a of AI){
+      if(a.k.some(k=>lc.includes(k))){resp=a.a;break;}
+    }
+    addMsg(resp,'bot');
+  },1000+(Math.random()*600));
+}
+
+function aiAsk(q){document.getElementById('aiInp').value=q;aiSend();}
+
+function addMsg(txt,type){
+  const m=document.getElementById('aiMsgs');
+  const d=document.createElement('div');
+  d.className=`msg ${type}`;
+  d.style.whiteSpace='pre-line';
+  d.textContent=txt;
+  m.appendChild(d);
+  m.scrollTop=m.scrollHeight;
+  return d;
+}
+
+function addTyping(){
+  const m=document.getElementById('aiMsgs');
+  const d=document.createElement('div');
+  d.className='msg bot';
+  d.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  m.appendChild(d);
+  m.scrollTop=m.scrollHeight;
+  return d;
+}
+
+// ── INIT ──
+renderNav();
+</script>
+</body>
+</html>
